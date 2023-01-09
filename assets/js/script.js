@@ -136,18 +136,18 @@ const onImageNext = function () {
 
   const currentImage = this.querySelector(".js-slider__thumbs-image--current");
   const currentfigure = currentImage.parentElement;
-  const nextFigureToCurrent = currentfigure && currentfigure.nextElementSibling;
-  const nextImageToCurrent =
-    nextFigureToCurrent && nextFigureToCurrent.querySelector("img");
+  let nextFigureToCurrent = currentfigure && currentfigure.nextElementSibling;
+  if (!nextFigureToCurrent)
+    nextFigureToCurrent =
+      currentfigure.parentElement.firstElementChild.nextElementSibling;
+  const nextImageToCurrent = nextFigureToCurrent.querySelector("img");
 
-  if (nextImageToCurrent) {
-    this.querySelector(".js-slider__image").setAttribute(
-      "src",
-      nextImageToCurrent.getAttribute("src")
-    );
-    nextImageToCurrent.classList.add("js-slider__thumbs-image--current");
-    currentImage.classList.remove("js-slider__thumbs-image--current");
-  }
+  this.querySelector(".js-slider__image").setAttribute(
+    "src",
+    nextImageToCurrent.getAttribute("src")
+  );
+  nextImageToCurrent.classList.add("js-slider__thumbs-image--current");
+  currentImage.classList.remove("js-slider__thumbs-image--current");
 };
 
 const onImagePrev = function () {
@@ -163,22 +163,20 @@ const onImagePrev = function () {
 
   const currentImage = this.querySelector(".js-slider__thumbs-image--current");
   const currentfigure = currentImage.parentElement;
-  const prevFigureToCurrent =
+  let prevFigureToCurrent =
     currentfigure && currentfigure.previousElementSibling;
-  const prevImageToCurrent =
-    prevFigureToCurrent && prevFigureToCurrent.querySelector("img");
-
   if (
-    prevImageToCurrent &&
-    !prevFigureToCurrent.classList.contains("js-slider__thumbs-item--prototype")
-  ) {
-    this.querySelector(".js-slider__image").setAttribute(
-      "src",
-      prevImageToCurrent.getAttribute("src")
-    );
-    prevImageToCurrent.classList.add("js-slider__thumbs-image--current");
-    currentImage.classList.remove("js-slider__thumbs-image--current");
-  }
+    prevFigureToCurrent.classList.contains("js-slider__thumbs-item--prototype")
+  )
+    prevFigureToCurrent = currentfigure.parentElement.lastElementChild;
+  const prevImageToCurrent = prevFigureToCurrent.querySelector("img");
+
+  this.querySelector(".js-slider__image").setAttribute(
+    "src",
+    prevImageToCurrent.getAttribute("src")
+  );
+  prevImageToCurrent.classList.add("js-slider__thumbs-image--current");
+  currentImage.classList.remove("js-slider__thumbs-image--current");
 };
 
 const onClose = function () {
