@@ -118,7 +118,7 @@ const onImageClick = function (event, sliderRootElement, imagesSelector) {
     thumbsItemProto.parentElement.appendChild(thumbsItem);
 
     if (thumbsItemImage.getAttribute("src") === eventImageSource) {
-      thumbsItem.classList.add("js-slider__thumbs-image--current");
+      thumbsItemImage.classList.add("js-slider__thumbs-image--current");
     }
   });
 };
@@ -135,12 +135,15 @@ const onImageNext = function (event) {
   // 5. podmienić atrybut o nazwie [src] dla [.js-slider__image]
 
   const currentImage = this.querySelector(".js-slider__thumbs-image--current");
-  const nextImageToCurrent = currentImage && currentImage.nextElementSibling;
+  const currentfigure = currentImage.parentElement;
+  const nextFigureToCurrent = currentfigure && currentfigure.nextElementSibling;
+  const nextImageToCurrent =
+    nextFigureToCurrent && nextFigureToCurrent.querySelector("img");
 
   if (nextImageToCurrent) {
     this.querySelector(".js-slider__image").setAttribute(
       "src",
-      nextImageToCurrent.querySelector("img").getAttribute("src")
+      nextImageToCurrent.getAttribute("src")
     );
     nextImageToCurrent.classList.add("js-slider__thumbs-image--current");
     currentImage.classList.remove("js-slider__thumbs-image--current");
@@ -159,16 +162,19 @@ const onImagePrev = function (event) {
   // 5. podmienić atrybut [src] dla [.js-slider__image]
 
   const currentImage = this.querySelector(".js-slider__thumbs-image--current");
+  const currentfigure = currentImage.parentElement;
+  const prevFigureToCurrent =
+    currentfigure && currentfigure.previousElementSibling;
   const prevImageToCurrent =
-    currentImage && currentImage.previousElementSibling;
+    prevFigureToCurrent && prevFigureToCurrent.querySelector("img");
 
   if (
     prevImageToCurrent &&
-    !prevImageToCurrent.classList.contains("js-slider__thumbs-item--prototype")
+    !prevFigureToCurrent.classList.contains("js-slider__thumbs-item--prototype")
   ) {
     this.querySelector(".js-slider__image").setAttribute(
       "src",
-      prevImageToCurrent.querySelector("img").getAttribute("src")
+      prevImageToCurrent.getAttribute("src")
     );
     prevImageToCurrent.classList.add("js-slider__thumbs-image--current");
     currentImage.classList.remove("js-slider__thumbs-image--current");
