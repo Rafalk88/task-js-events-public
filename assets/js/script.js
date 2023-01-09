@@ -48,7 +48,7 @@ const initEvents = function (imagesList, sliderRootElement) {
   // tylko wtedy, gdy użytkownik kliknie w [.js-slider__zoom]
   const zoom = sliderRootElement.querySelector(".js-slider__zoom");
   zoom.addEventListener("click", function (e) {
-    if (e.target.classList.contains("js-slider_zoom")) {
+    if (e.target.classList.contains("js-slider__zoom")) {
       fireCustomEvent(zoom, "js-slider-close");
     }
   });
@@ -123,7 +123,7 @@ const onImageClick = function (event, sliderRootElement, imagesSelector) {
   });
 };
 
-const onImageNext = function (event) {
+const onImageNext = function () {
   // console.log(this, "onImageNext");
   // [this] wskazuje na element [.js-slider]
 
@@ -150,7 +150,7 @@ const onImageNext = function (event) {
   }
 };
 
-const onImagePrev = function (event) {
+const onImagePrev = function () {
   // console.log(this, "onImagePrev");
   // [this] wskazuje na element [.js-slider]
 
@@ -181,10 +181,16 @@ const onImagePrev = function (event) {
   }
 };
 
-const onClose = function (event) {
+const onClose = function () {
   // todo:
   // 1. należy usunać klasę [js-slider--active] dla [.js-slider]
   // 2. należy usunać wszystkie dzieci dla [.js-slider__thumbs] pomijając [.js-slider__thumbs-item--prototype]
 
-  console.log(event);
+  this.classList.remove("js-slider--active");
+
+  const elementsToRemove = this.querySelector(".js-slider__thumbs").children;
+  for (const [, value] of Object.entries(elementsToRemove)) {
+    if (!value.classList.contains("js-slider__thumbs-item--prototype"))
+      value.remove();
+  }
 };
