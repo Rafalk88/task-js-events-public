@@ -148,7 +148,7 @@ const onImageNext = function (event) {
 };
 
 const onImagePrev = function (event) {
-  console.log(this, "onImagePrev");
+  // console.log(this, "onImagePrev");
   // [this] wskazuje na element [.js-slider]
 
   // todo:
@@ -157,6 +157,22 @@ const onImagePrev = function (event) {
   // 3. sprawdzić czy ten element istnieje i czy nie posiada klasy [.js-slider__thumbs-item--prototype]
   // 4. przełączyć klasę [.js-slider__thumbs-image--current] do odpowiedniego elementu
   // 5. podmienić atrybut [src] dla [.js-slider__image]
+
+  const currentImage = this.querySelector(".js-slider__thumbs-image--current");
+  const prevImageToCurrent =
+    currentImage && currentImage.previousElementSibling;
+
+  if (
+    prevImageToCurrent &&
+    !prevImageToCurrent.classList.contains("js-slider__thumbs-item--prototype")
+  ) {
+    this.querySelector(".js-slider__image").setAttribute(
+      "src",
+      prevImageToCurrent.querySelector("img").getAttribute("src")
+    );
+    prevImageToCurrent.classList.add("js-slider__thumbs-image--current");
+    currentImage.classList.remove("js-slider__thumbs-image--current");
+  }
 };
 
 const onClose = function (event) {
