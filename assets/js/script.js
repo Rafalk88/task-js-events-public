@@ -1,29 +1,32 @@
-const init = function() {
-    const imagesList = document.querySelectorAll('.gallery__item');
-    imagesList.forEach( img => {
-        img.dataset.sliderGroupName = Math.random() > 0.5 ? 'nice' : 'good';
-    }); // za każdym przeładowaniem strony przydzielaj inną nazwę grupy dla zdjęcia
+let intervalId;
 
-    runJSSlider();
-}
+const init = function () {
+  const imagesList = document.querySelectorAll(".gallery__item");
+  imagesList.forEach((img) => {
+    img.dataset.sliderGroupName = Math.random() > 0.5 ? "nice" : "good";
+  }); // za każdym przeładowaniem strony przydzielaj inną nazwę grupy dla zdjęcia
 
-document.addEventListener('DOMContentLoaded', init);
+  runJSSlider();
+};
 
-const runJSSlider = function() {
-    const imagesSelector = '.gallery__item';
-    const sliderRootSelector = '.js-slider'; 
+document.addEventListener("DOMContentLoaded", init);
 
-    const imagesList = document.querySelectorAll(imagesSelector);
-    const sliderRootElement = document.querySelector(sliderRootSelector);
+const runJSSlider = function () {
+  const imagesSelector = ".gallery__item";
+  const sliderRootSelector = ".js-slider";
 
-    initEvents(imagesList, sliderRootElement);
-    initCustomEvents(imagesList, sliderRootElement, imagesSelector);
-}
+  const imagesList = document.querySelectorAll(imagesSelector);
+  const sliderRootElement = document.querySelector(sliderRootSelector);
+
+  initEvents(imagesList, sliderRootElement);
+  initCustomEvents(imagesList, sliderRootElement, imagesSelector);
+};
 
 const initEvents = function (imagesList, sliderRootElement) {
   imagesList.forEach(function (item) {
     item.addEventListener("click", function (e) {
       fireCustomEvent(e.currentTarget, "js-slider-img-click");
+      fireCustomEvent(sliderRootElement, "js-slider-autoPhoto-start");
     });
   });
 
@@ -33,6 +36,7 @@ const initEvents = function (imagesList, sliderRootElement) {
   const navNext = sliderRootElement.querySelector(".js-slider__nav--next");
   navNext.addEventListener("click", function () {
     fireCustomEvent(navNext, "js-slider-img-next");
+    fireCustomEvent(sliderRootElement, "js-slider-autoPhoto-reset");
   });
 
   // todo:
@@ -41,6 +45,7 @@ const initEvents = function (imagesList, sliderRootElement) {
   const navPrev = sliderRootElement.querySelector(".js-slider__nav--prev");
   navPrev.addEventListener("click", function () {
     fireCustomEvent(navPrev, "js-slider-img-prev");
+    fireCustomEvent(sliderRootElement, "js-slider-autoPhoto-reset");
   });
 
   // todo:
@@ -50,6 +55,7 @@ const initEvents = function (imagesList, sliderRootElement) {
   zoom.addEventListener("click", function (e) {
     if (e.target.classList.contains("js-slider__zoom")) {
       fireCustomEvent(zoom, "js-slider-close");
+      fireCustomEvent(sliderRootElement, "js-slider-autoPhoto-stop");
     }
   });
 };
@@ -76,6 +82,34 @@ const initCustomEvents = function (
   sliderRootElement.addEventListener("js-slider-img-next", onImageNext);
   sliderRootElement.addEventListener("js-slider-img-prev", onImagePrev);
   sliderRootElement.addEventListener("js-slider-close", onClose);
+  sliderRootElement.addEventListener(
+    "js-slider-autoPhoto-start",
+    photoIntervalStart
+  );
+  sliderRootElement.addEventListener(
+    "js-slider-autoPhoto-stop",
+    photoIntervalStop
+  );
+  sliderRootElement.addEventListener(
+    "js-slider-autoPhoto-reset",
+    photoResetInterval
+  );
+};
+
+const photoIntervalStart = function () {
+  if (!intervalId) {
+    intervalId = setInterval(onImageNext.bind(this), 3000);
+  }
+};
+
+const photoIntervalStop = function () {
+  clearInterval(intervalId);
+  intervalId = null;
+};
+
+const photoResetInterval = function () {
+  photoIntervalStop.bind(this)();
+  photoIntervalStart.bind(this)();
 };
 
 const onImageClick = function (event, sliderRootElement, imagesSelector) {
@@ -133,7 +167,6 @@ const onImageNext = function () {
   // 3. sprawdzić czy ten element istnieje - jeśli nie to [.nextElementSibling] zwróci [null]
   // 4. przełączyć klasę [.js-slider__thumbs-image--current] do odpowiedniego elementu
   // 5. podmienić atrybut o nazwie [src] dla [.js-slider__image]
-
   const currentImage = this.querySelector(".js-slider__thumbs-image--current");
   const currentfigure = currentImage.parentElement;
   let nextFigureToCurrent = currentfigure && currentfigure.nextElementSibling;
